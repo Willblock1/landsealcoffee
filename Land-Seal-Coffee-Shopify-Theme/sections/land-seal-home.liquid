@@ -1,0 +1,119 @@
+{% assign featured_product = section.settings.featured_product %}
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">SMALL-BATCH · WHOLE BEAN</p>
+    <h1>Good coffee.<br><em>No fuss.</em></h1>
+    <p class="intro">Thoughtfully sourced beans, roasted fresh in Indianapolis, and shipped when they're ready—not when they've been sitting on a shelf.</p>
+    <a class="primary-link" href="#coffee">Shop the current roast <span>↓</span></a>
+    <div class="freshness"><i></i> Roasted in small batches</div>
+  </div>
+  <div class="hero-visual">
+    <div class="sun"></div>
+    <img class="hero-logo" src="{{ 'land-seal-logo.png' | asset_url }}" alt="" width="520" height="520">
+    <div class="wave-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+    <p>FROM THE BAY<br>TO THE CROSSROADS</p>
+  </div>
+</section>
+
+<section class="marquee" aria-label="Coffee qualities">
+  <span>WHOLE BEAN</span><b>✦</b><span>ROASTED FRESH</span><b>✦</b><span>SMALL BATCH</span><b>✦</b><span>INDIANAPOLIS</span>
+</section>
+
+<section class="product-section" id="coffee">
+  <div class="section-heading">
+    <div><p class="eyebrow">WHAT'S ROASTING</p><h2>The current roast</h2></div>
+    <p>We keep the menu short so every coffee gets our full attention. The origin changes with each fresh lot, but the approach stays simple.</p>
+  </div>
+  <article class="product-card">
+    <div class="roast-guide">
+      <p class="eyebrow">OUR APPROACH TO DRIP</p>
+      <h3>Single origin.<br><em>Always.</em></h3>
+      <p class="roast-intro">One place, one harvest, and a clear sense of where the coffee came from.</p>
+      <div class="origin-list" aria-label="Origins we feature">
+        <span>Ethiopia</span><span>Kenya</span><span>Costa Rica</span><span>Guatemala</span>
+      </div>
+      <p class="origin-note">Ethiopian and Kenyan coffees are our favorites. Costa Rican and Guatemalan lots rotate in when we find one we love.</p>
+      <div class="espresso-note"><span>FOR ESPRESSO</span><strong>We build a blend for balance, body, and sweetness.</strong></div>
+    </div>
+    <div class="product-info">
+      {% if featured_product != blank %}
+        <p class="eyebrow">WHOLE BEAN · ROASTED TO ORDER</p>
+        <h3>{{ featured_product.title | escape }}</h3>
+        <p class="price">{{ featured_product.selected_or_first_available_variant.price | money }}</p>
+        <div class="description">{{ featured_product.description | strip_html | truncatewords: 42 }}</div>
+        <div class="details">
+          <div><span>ROAST</span><strong>{{ section.settings.roast_level | escape }}</strong></div>
+          <div><span>BEST FOR</span><strong>{{ section.settings.best_for | escape }}</strong></div>
+          <div><span>FORMAT</span><strong>Whole bean only</strong></div>
+        </div>
+        {% form 'product', featured_product, class: 'product-form' %}
+          {% if featured_product.has_only_default_variant %}
+            <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
+          {% else %}
+            <label>Roast
+              <select name="id">
+                {% for variant in featured_product.variants %}
+                  <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
+                    {{ variant.title | escape }} · {{ variant.price | money }}{% unless variant.available %} · Sold out{% endunless %}
+                  </option>
+                {% endfor %}
+              </select>
+            </label>
+          {% endif %}
+          <label>Quantity
+            <select name="quantity">
+              <option value="1">1 bag</option><option value="2">2 bags</option><option value="3">3 bags</option><option value="4">4 bags</option>
+            </select>
+          </label>
+          <button class="add-button" type="submit" {% unless featured_product.available %}disabled{% endunless %}>
+            {% if featured_product.available %}Add to cart{% else %}Sold out{% endif %}
+          </button>
+        {% endform %}
+        <p class="shipping-note">Roasted to order · Ships in 2–3 business days</p>
+      {% else %}
+        <p class="eyebrow">CONNECT A SHOPIFY PRODUCT</p>
+        <h3>Choose your current roast</h3>
+        <p class="description">Open the theme editor and select a product for this section. Its title, price, description, availability, variants, and checkout will all come directly from Shopify.</p>
+      {% endif %}
+    </div>
+  </article>
+</section>
+
+<section class="story" id="story">
+  <div class="story-mark"><img src="{{ 'land-seal-logo.png' | asset_url }}" alt="" width="500" height="500"></div>
+  <div class="story-copy">
+    <p class="eyebrow">OUR STORY</p>
+    <h2>It started with a<br>popcorn popper.</h2>
+    <p>I've always loved coffee, but by 2021 I was growing tired of what I could find at Starbucks and the grocery store. With two weeks between jobs, I had an idea: roast my own.</p>
+    <p>I did a little research, bought a popcorn popper, and started roasting on the stove in our one-bedroom apartment. I wouldn't recommend that approach—the smell took over, and I came a little too close to burning down the building more than once.</p>
+    <p>I've since upgraded to a proper roaster and a dedicated setup in my garage. Pour-over is still my favorite way to drink coffee, though I've spent plenty of time mastering espresso for my wife and friends.</p>
+    <div class="name-origin">
+      <span>WHY LAND SEAL?</span>
+      <p>While we were living in San Francisco, we often saw seals in the bay—and couldn't help noticing how much they looked like our dog, Finn, a pitty mix. Now that we're in Indiana, the name honors our sea-dog friends back in the bay through our own dog: the land seal.</p>
+    </div>
+    <div class="freshness-principle">
+      <span>WHAT FIVE YEARS OF ROASTING TAUGHT ME</span>
+      <strong>Great coffee comes down to quality beans and a fresh roast.</strong>
+    </div>
+    <p>Like bread, coffee gets stale. That's why I roast only after you place your order—so you can experience it at its freshest.</p>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <p class="eyebrow">GOOD TO KNOW</p><h2>Before you brew</h2>
+  <details open><summary>Do you sell ground coffee?</summary><p>No—Land Seal coffee is sold as whole bean only, so it stays fresh until you're ready to grind and brew it.</p></details>
+  <details><summary>When is the coffee roasted?</summary><p>Every order goes into the roasting queue after purchase. We roast in small batches, then pack and ship within 2–3 business days.</p></details>
+  <details><summary>How should I store the beans?</summary><p>Keep the bag sealed in a cool, dry cupboard. Skip the fridge and grind only what you need before brewing.</p></details>
+</section>
+
+{% schema %}
+{
+  "name": "Land Seal storefront",
+  "settings": [
+    {"type":"product","id":"featured_product","label":"Current coffee product"},
+    {"type":"text","id":"roast_level","label":"Roast level","default":"Medium"},
+    {"type":"text","id":"best_for","label":"Best for","default":"Drip · Pour-over"}
+  ],
+  "presets": [{"name":"Land Seal storefront"}]
+}
+{% endschema %}

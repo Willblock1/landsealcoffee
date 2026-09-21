@@ -1,0 +1,9 @@
+<footer class="site-footer">
+  <img src="{{ 'land-seal-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="70" height="70">
+  <div><strong>LAND SEAL COFFEE ROASTERS</strong><p>Born in San Francisco · Roasted in Indianapolis</p></div>
+  <p>© {{ 'now' | date: '%Y' }} {{ shop.name }}</p>
+</footer>
+
+{% schema %}
+{"name":"Footer","settings":[]}
+{% endschema %}
