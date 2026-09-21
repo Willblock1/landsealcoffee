@@ -71,9 +71,9 @@
         {% endform %}
         <p class="shipping-note">Roasted to order · Ships in 2–3 business days</p>
       {% else %}
-        <p class="eyebrow">CONNECT A SHOPIFY PRODUCT</p>
-        <h3>Choose your current roast</h3>
-        <p class="description">Open the theme editor and select a product for this section. Its title, price, description, availability, variants, and checkout will all come directly from Shopify.</p>
+        <p class="eyebrow">{{ 'storefront.empty.eyebrow' | t }}</p>
+        <h3>{{ 'storefront.empty.heading' | t }}</h3>
+        <p class="description">{{ 'storefront.empty.description' | t }}</p>
       {% endif %}
     </div>
   </article>
@@ -110,7 +110,7 @@
 {
   "name": "Land Seal storefront",
   "settings": [
-    {"type":"product","id":"featured_product","label":"Current coffee product"},
+    {"type":"product","id":"featured_product","label":"Current coffee product","info":"Select a coffee product published to the Online Store. Shopify supplies its price, variants, availability, and checkout."},
     {"type":"text","id":"roast_level","label":"Roast level","default":"Medium"},
     {"type":"text","id":"best_for","label":"Best for","default":"Drip · Pour-over"}
   ],

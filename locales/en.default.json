@@ -1,1 +1,14 @@
-{"general":{"accessibility":{"skip_to_content":"Skip to content"}}}
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content"
+    }
+  },
+  "storefront": {
+    "empty": {
+      "eyebrow": "Current roast",
+      "heading": "Coffee is currently unavailable",
+      "description": "Please check back for our next available roast."
+    }
+  }
+}
