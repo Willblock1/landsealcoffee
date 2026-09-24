@@ -1,13 +1,30 @@
+{% assign coffee_collection = section.settings.coffee_collection %}
+{% if coffee_collection == blank %}
+  {% assign coffee_collection = collections.all %}
+{% endif %}
+{% assign available_products = coffee_collection.products | where: 'available', true %}
 {% assign featured_product = section.settings.featured_product %}
 {% if featured_product == blank %}
-  {% assign featured_product = collections.all.products.first %}
+  {% assign featured_product = available_products.first %}
+{% elsif featured_product.available == false %}
+  {% assign featured_product = available_products.first %}
+{% endif %}
+{% assign featured_best_for = section.settings.best_for %}
+{% if featured_product != blank %}
+  {% assign featured_tags = featured_product.tags | join: ',' | downcase %}
+  {% assign featured_title = featured_product.title | downcase %}
+  {% if featured_tags contains 'espresso' %}
+    {% assign featured_best_for = 'Espresso' %}
+  {% elsif featured_title contains 'ethiopia' or featured_title contains 'kenya' %}
+    {% assign featured_best_for = 'Drip · Pour-over' %}
+  {% endif %}
 {% endif %}
 <section class="hero">
   <div class="hero-copy">
     <p class="eyebrow">SMALL-BATCH · WHOLE BEAN</p>
     <h1>Good coffee.<br><em>No fuss.</em></h1>
     <p class="intro">Thoughtfully sourced beans, roasted fresh in Indianapolis, and shipped when they're ready—not when they've been sitting on a shelf.</p>
-    <a class="primary-link" href="#coffee">Shop the current roast <span>↓</span></a>
+    <a class="primary-link" href="#coffee">See what's in stock <span>↓</span></a>
     <div class="freshness"><i></i> Roasted in small batches</div>
   </div>
   <div class="hero-visual">
@@ -24,19 +41,47 @@
 
 <section class="product-section" id="coffee">
   <div class="section-heading">
-    <div><p class="eyebrow">WHAT'S ROASTING</p><h2>The current roast</h2></div>
-    <p>We keep the menu short so every coffee gets our full attention. The origin changes with each fresh lot, but the approach stays simple.</p>
+    <div><p class="eyebrow">ROASTING NOW</p><h2>What's in stock</h2></div>
+    <p>Choose from every coffee currently in stock. This list updates automatically as products become available or sell out in Shopify.</p>
   </div>
   <article class="product-card">
-    <div class="roast-guide">
-      <p class="eyebrow">OUR APPROACH TO DRIP</p>
-      <h3>Single origin.<br><em>Always.</em></h3>
-      <p class="roast-intro">One place, one harvest, and a clear sense of where the coffee came from.</p>
-      <div class="origin-list" aria-label="Origins we feature">
-        <span>Ethiopia</span><span>Kenya</span><span>Costa Rica</span><span>Guatemala</span>
-      </div>
-      <p class="origin-note">Ethiopian and Kenyan coffees are our favorites. Costa Rican and Guatemalan lots rotate in when we find one we love.</p>
-      <div class="espresso-note"><span>FOR ESPRESSO</span><strong>We build a blend for balance, body, and sweetness.</strong></div>
+    <div class="roast-guide inventory-guide">
+      <p class="eyebrow">ORIGINS AVAILABLE NOW</p>
+      <h3>Pick your<br><em>coffee.</em></h3>
+      {% if available_products.size > 0 %}
+        <p class="inventory-summary">{{ available_products.size }} fresh {% if available_products.size == 1 %}roast{% else %}roasts{% endif %} ready to order. Select an origin to see its full details.</p>
+        <nav class="inventory-list" aria-label="Available coffee origins">
+          {% for coffee_product in available_products limit: section.settings.max_products %}
+            {% assign brew_method = '' %}
+            {% assign coffee_tags = coffee_product.tags | join: ',' | downcase %}
+            {% assign coffee_title = coffee_product.title | downcase %}
+            {% if coffee_tags contains 'espresso' %}
+              {% assign brew_method = 'Best for espresso' %}
+            {% elsif coffee_title contains 'ethiopia' or coffee_title contains 'kenya' %}
+              {% assign brew_method = 'Best for drip' %}
+            {% endif %}
+            <a class="inventory-card{% if featured_product.id == coffee_product.id %} inventory-card--featured{% endif %}" href="{{ coffee_product.url }}">
+              <span class="inventory-card__media">
+                {% if coffee_product.featured_image %}
+                  {% assign card_image_alt = coffee_product.featured_image.alt | default: coffee_product.title %}
+                  {{ coffee_product.featured_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: card_image_alt }}
+                {% else %}
+                  <span aria-hidden="true">☕</span>
+                {% endif %}
+              </span>
+              <span class="inventory-card__content">
+                <span class="inventory-card__status"><i></i> In stock</span>
+                <strong>{{ coffee_product.title | escape }}</strong>
+                {% if brew_method != blank %}<small>{{ brew_method }}</small>{% endif %}
+                <small>{{ coffee_product.price | money }}</small>
+              </span>
+              <span class="inventory-card__arrow" aria-hidden="true">→</span>
+            </a>
+          {% endfor %}
+        </nav>
+      {% else %}
+        <p class="inventory-summary">The next small-batch release is being prepared. Check back soon for new origins.</p>
+      {% endif %}
     </div>
     <div class="product-info">
       {% if featured_product != blank %}
@@ -46,14 +91,14 @@
         <div class="description">{{ featured_product.description | strip_html | truncatewords: 42 }}</div>
         <div class="details">
           <div><span>ROAST</span><strong>{{ section.settings.roast_level | escape }}</strong></div>
-          <div><span>BEST FOR</span><strong>{{ section.settings.best_for | escape }}</strong></div>
+          <div><span>BEST FOR</span><strong>{{ featured_best_for | escape }}</strong></div>
           <div><span>FORMAT</span><strong>Whole bean only</strong></div>
         </div>
         {% form 'product', featured_product, class: 'product-form' %}
           {% if featured_product.has_only_default_variant %}
             <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
           {% else %}
-            <label>Roast
+            <label>Choose an option
               <select name="id">
                 {% for variant in featured_product.variants %}
                   <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
@@ -89,7 +134,7 @@
     <h2>It started with a<br>popcorn popper.</h2>
     <p>I've always loved coffee, but by 2021 I was growing tired of what I could find at Starbucks and the grocery store. With two weeks between jobs, I had an idea: roast my own.</p>
     <p>I did a little research, bought a popcorn popper, and started roasting on the stove in our one-bedroom apartment. I wouldn't recommend that approach—the smell took over, and I came a little too close to burning down the building more than once.</p>
-    <p>I've since upgraded to a proper roaster and a dedicated setup in my garage. Pour-over is still my favorite way to drink coffee, though I've spent plenty of time mastering espresso for my wife and friends.</p>
+    <p>I've since upgraded to a proper roaster and a dedicated setup in my garage. Pour-over is still how I most often drink coffee, though I've spent plenty of time mastering espresso for my wife and friends.</p>
     <div class="name-origin">
       <span>WHY LAND SEAL?</span>
       <p>While we were living in San Francisco, we often saw seals in the bay—and couldn't help noticing how much they looked like our dog, Finn, a pitty mix. Now that we're in Indiana, the name honors our sea-dog friends back in the bay through our own dog: the land seal.</p>
@@ -113,7 +158,9 @@
 {
   "name": "Land Seal storefront",
   "settings": [
-    {"type":"product","id":"featured_product","label":"Current coffee product"},
+    {"type":"collection","id":"coffee_collection","label":"Available coffee collection"},
+    {"type":"product","id":"featured_product","label":"Featured coffee (optional)"},
+    {"type":"range","id":"max_products","label":"Maximum coffees shown","min":2,"max":12,"step":1,"default":6},
     {"type":"text","id":"roast_level","label":"Roast level","default":"Medium"},
     {"type":"text","id":"best_for","label":"Best for","default":"Drip · Pour-over"}
   ],
