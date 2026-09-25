@@ -9,6 +9,13 @@
       "eyebrow": "Current roast",
       "heading": "Coffee is currently unavailable",
       "description": "Please check back for our next available roast."
+    },
+    "upcoming": {
+      "badge": "Coming soon",
+      "format": "12 oz \u00b7 Whole bean",
+      "eyebrow": "ON THE WAY",
+      "heading": "Coming soon",
+      "description": "Our next coffees are on their way. Available to order once the beans arrive."
     }
   }
 }
