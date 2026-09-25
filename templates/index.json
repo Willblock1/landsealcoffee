@@ -1,1 +1,78 @@
-{"sections":{"main":{"type":"land-seal-home","settings":{"roast_level":"Medium","best_for":"Drip · Pour-over"}}},"order":["main"]}
+{
+  "sections": {
+    "main": {
+      "type": "land-seal-home",
+      "settings": {
+        "roast_level": "Medium",
+        "best_for": "Drip \u00b7 Pour-over"
+      },
+      "blocks": {
+        "colombia": {
+          "type": "upcoming_coffee",
+          "settings": {
+            "enabled": true,
+            "product_handle": "colombia-honey-process-aponte-12-oz",
+            "title": "Colombia Honey Process Aponte",
+            "notes": "Molasses, red fruit, and bittersweet cocoa. Full-bodied honey process coffee.",
+            "brew_method": "For espresso",
+            "price_cents": 2400
+          }
+        },
+        "monkey": {
+          "type": "upcoming_coffee",
+          "settings": {
+            "enabled": true,
+            "product_handle": "sweet-maria-s-espresso-monkey-blend-12-oz",
+            "title": "Espresso Monkey Blend",
+            "notes": "Rich chocolate, gentle fruit accents, and a full body.",
+            "brew_method": "For espresso",
+            "price_cents": 2200
+          }
+        },
+        "kenya": {
+          "type": "upcoming_coffee",
+          "settings": {
+            "enabled": true,
+            "product_handle": "kenya-nyeri-mahiga-ab-12-oz",
+            "title": "Kenya Nyeri Mahiga AB",
+            "notes": "Black currant, cranberry, and warm spice with tea-like aromatics.",
+            "brew_method": "For drip \u00b7 Pour-over",
+            "price_cents": 2400
+          }
+        },
+        "costa": {
+          "type": "upcoming_coffee",
+          "settings": {
+            "enabled": true,
+            "product_handle": "costa-rica-tarrazu-beneficio-los-angeles-12-oz",
+            "title": "Costa Rica Beneficio Los Angeles",
+            "notes": "Dried peach, fig, and cocoa with a round body and rustic sweetness.",
+            "brew_method": "For drip \u00b7 Pour-over",
+            "price_cents": 2400
+          }
+        },
+        "ethiopia": {
+          "type": "upcoming_coffee",
+          "settings": {
+            "enabled": true,
+            "product_handle": "ethiopia-dry-process-kercha-haruse-12-oz",
+            "title": "Ethiopia Kercha Haruse",
+            "notes": "Fresh citrus, stone fruit, delicate florals, and black tea.",
+            "brew_method": "For drip \u00b7 Pour-over",
+            "price_cents": 2300
+          }
+        }
+      },
+      "block_order": [
+        "colombia",
+        "monkey",
+        "kenya",
+        "costa",
+        "ethiopia"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
