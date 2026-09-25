@@ -51,7 +51,7 @@
       {% if available_products.size > 0 %}
         <p class="inventory-summary">{{ available_products.size }} fresh {% if available_products.size == 1 %}roast{% else %}roasts{% endif %} ready to order. Select an origin to see its full details.</p>
         <nav class="inventory-list" aria-label="Available coffee origins">
-          {% for coffee_product in available_products limit: section.settings.max_products %}
+          {% for coffee_product in available_products %}
             {% assign brew_method = '' %}
             {% assign coffee_tags = coffee_product.tags | join: ',' | downcase %}
             {% assign coffee_title = coffee_product.title | downcase %}
@@ -127,6 +127,37 @@
   </article>
 </section>
 
+{% capture upcoming_cards %}
+  {% for block in section.blocks %}
+    {% if block.type == 'upcoming_coffee' and block.settings.enabled %}
+      {% assign upcoming_product = all_products[block.settings.product_handle] %}
+      {% if upcoming_product == blank %}
+        <article class="coming-coffee" {{ block.shopify_attributes }}>
+          <p class="coming-coffee__badge">{{ 'storefront.upcoming.badge' | t }}</p>
+          <h3>{{ block.settings.title | escape }}</h3>
+          <p class="coming-coffee__notes">{{ block.settings.notes | escape }}</p>
+          <p class="coming-coffee__brew">{{ block.settings.brew_method | escape }}</p>
+          <p class="coming-coffee__price">{{ block.settings.price_cents | money }} <span>· {{ 'storefront.upcoming.format' | t }}</span></p>
+        </article>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+{% assign upcoming_cards = upcoming_cards | strip %}
+{% if upcoming_cards != blank %}
+  <section class="coming-section" aria-labelledby="coming-heading">
+    <div class="section-heading">
+      <div><p class="eyebrow">{{ 'storefront.upcoming.eyebrow' | t }}</p><h2 id="coming-heading">{{ 'storefront.upcoming.heading' | t }}</h2></div>
+      <p>{{ 'storefront.upcoming.description' | t }}</p>
+    </div>
+    <div class="coming-grid">{{ upcoming_cards }}</div>
+  </section>
+{% endif %}
+
+{% stylesheet %}
+.coming-section{padding:0 8vw 7rem}.coming-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1.2rem}.coming-coffee{padding:1.6rem;background:var(--white);border:1.5px solid rgba(24,50,74,.2);border-radius:10px;display:flex;flex-direction:column}.coming-coffee__badge{align-self:flex-start;padding:.35rem .65rem;background:var(--paper);color:var(--ink);border-radius:20px;font-size:.72rem;font-weight:800;margin:0 0 1.1rem}.coming-coffee h3{font-family:'Fraunces',serif;font-size:1.55rem;line-height:1.2;margin:0 0 .8rem}.coming-coffee__notes{line-height:1.65;color:#506274;margin:0 0 1rem}.coming-coffee__brew{font-size:.82rem;font-weight:700;color:var(--blue);margin:auto 0 0}.coming-coffee__price{font-size:1.15rem;font-weight:800;margin:1rem 0 0}.coming-coffee__price span{font-size:.75rem;font-weight:500}@media(max-width:800px){.coming-section{padding:0 1rem 4rem}}
+{% endstylesheet %}
+
 <section class="story" id="story">
   <div class="story-mark"><img src="{{ 'land-seal-logo.png' | asset_url }}" alt="" width="500" height="500"></div>
   <div class="story-copy">
@@ -158,12 +189,75 @@
 {
   "name": "Land Seal storefront",
   "settings": [
-    {"type":"collection","id":"coffee_collection","label":"Available coffee collection"},
-    {"type":"product","id":"featured_product","label":"Featured coffee (optional)"},
-    {"type":"range","id":"max_products","label":"Maximum coffees shown","min":2,"max":12,"step":1,"default":6},
-    {"type":"text","id":"roast_level","label":"Roast level","default":"Medium"},
-    {"type":"text","id":"best_for","label":"Best for","default":"Drip · Pour-over"}
+    {
+      "type": "collection",
+      "id": "coffee_collection",
+      "label": "Available coffee collection"
+    },
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Featured coffee (optional)"
+    },
+    {
+      "type": "text",
+      "id": "roast_level",
+      "label": "Roast level",
+      "default": "Medium"
+    },
+    {
+      "type": "text",
+      "id": "best_for",
+      "label": "Best for",
+      "default": "Drip \u00b7 Pour-over"
+    }
   ],
-  "presets": [{"name":"Land Seal storefront"}]
+  "presets": [
+    {
+      "name": "Land Seal storefront"
+    }
+  ],
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "upcoming_coffee",
+      "name": "Coming soon coffee",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Show preview",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "product_handle",
+          "label": "Shopify product handle",
+          "info": "Preview hides when this product is published to the Online Store."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Coffee name"
+        },
+        {
+          "type": "textarea",
+          "id": "notes",
+          "label": "Tasting notes"
+        },
+        {
+          "type": "text",
+          "id": "brew_method",
+          "label": "Brewing method"
+        },
+        {
+          "type": "number",
+          "id": "price_cents",
+          "label": "Price in cents (USD)",
+          "default": 2400
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}
