@@ -44,6 +44,8 @@
     <div><p class="eyebrow">ROASTING NOW</p><h2>What's in stock</h2></div>
     <p>Choose from every coffee currently in stock. This list updates automatically as products become available or sell out in Shopify.</p>
   </div>
+  {% assign active_panel_id = available_products.first.id %}
+  {% for p in available_products %}{% if p.id == featured_product.id %}{% assign active_panel_id = p.id %}{% endif %}{% endfor %}
   <article class="product-card">
     <div class="roast-guide inventory-guide">
       <p class="eyebrow">ORIGINS AVAILABLE NOW</p>
@@ -60,7 +62,7 @@
             {% elsif coffee_title contains 'ethiopia' or coffee_title contains 'kenya' %}
               {% assign brew_method = 'Best for drip' %}
             {% endif %}
-            <a class="inventory-card{% if featured_product.id == coffee_product.id %} inventory-card--featured{% endif %}" href="{{ coffee_product.url }}">
+            <a class="inventory-card{% if active_panel_id == coffee_product.id %} inventory-card--featured{% endif %}" href="{{ coffee_product.url }}" data-product-select="{{ coffee_product.id }}" aria-controls="product-panel-{{ coffee_product.id }}"{% if active_panel_id == coffee_product.id %} aria-current="true"{% endif %}>
               <span class="inventory-card__media">
                 {% if coffee_product.featured_image %}
                   {% assign card_image_alt = coffee_product.featured_image.alt | default: coffee_product.title %}
@@ -83,41 +85,53 @@
         <p class="inventory-summary">The next small-batch release is being prepared. Check back soon for new origins.</p>
       {% endif %}
     </div>
-    <div class="product-info">
+    <div class="product-info" id="product-details" tabindex="-1">
       {% if featured_product != blank %}
-        <p class="eyebrow">WHOLE BEAN · ROASTED TO ORDER</p>
-        <h3>{{ featured_product.title | escape }}</h3>
-        <p class="price">{{ featured_product.selected_or_first_available_variant.price | money }}</p>
-        <div class="description">{{ featured_product.description | strip_html | truncatewords: 42 }}</div>
-        <div class="details">
-          <div><span>ROAST</span><strong>{{ section.settings.roast_level | escape }}</strong></div>
-          <div><span>BEST FOR</span><strong>{{ featured_best_for | escape }}</strong></div>
-          <div><span>FORMAT</span><strong>Whole bean only</strong></div>
-        </div>
-        {% form 'product', featured_product, class: 'product-form' %}
-          {% if featured_product.has_only_default_variant %}
-            <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
-          {% else %}
-            <label>Choose an option
-              <select name="id">
-                {% for variant in featured_product.variants %}
-                  <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
-                    {{ variant.title | escape }} · {{ variant.price | money }}{% unless variant.available %} · Sold out{% endunless %}
-                  </option>
-                {% endfor %}
-              </select>
-            </label>
+        {% for detail_product in available_products %}
+          {% assign panel_best_for = section.settings.best_for %}
+          {% assign panel_tags = detail_product.tags | join: ',' | downcase %}
+          {% assign panel_title = detail_product.title | downcase %}
+          {% if panel_tags contains 'espresso' %}
+            {% assign panel_best_for = 'Espresso' %}
+          {% elsif panel_title contains 'ethiopia' or panel_title contains 'kenya' %}
+            {% assign panel_best_for = 'Drip · Pour-over' %}
           {% endif %}
-          <label>Quantity
-            <select name="quantity">
-              <option value="1">1 bag</option><option value="2">2 bags</option><option value="3">3 bags</option><option value="4">4 bags</option>
-            </select>
-          </label>
-          <button class="add-button" type="submit" {% unless featured_product.available %}disabled{% endunless %}>
-            {% if featured_product.available %}Add to cart{% else %}Sold out{% endif %}
-          </button>
-        {% endform %}
-        <p class="shipping-note">Roasted to order · Ships in 2–3 business days</p>
+          <div class="product-panel" id="product-panel-{{ detail_product.id }}" data-product-panel="{{ detail_product.id }}"{% unless active_panel_id == detail_product.id %} hidden{% endunless %}>
+            <p class="eyebrow">WHOLE BEAN · ROASTED TO ORDER</p>
+            <h3>{{ detail_product.title | escape }}</h3>
+            <p class="price">{{ detail_product.selected_or_first_available_variant.price | money }}</p>
+            <div class="description">{{ detail_product.description | strip_html | truncatewords: 60 }}</div>
+            <div class="details">
+              <div><span>ROAST</span><strong>{{ section.settings.roast_level | escape }}</strong></div>
+              <div><span>BEST FOR</span><strong>{{ panel_best_for | escape }}</strong></div>
+              <div><span>FORMAT</span><strong>Whole bean only</strong></div>
+            </div>
+            {% form 'product', detail_product, class: 'product-form' %}
+              {% if detail_product.has_only_default_variant %}
+                <input type="hidden" name="id" value="{{ detail_product.selected_or_first_available_variant.id }}">
+              {% else %}
+                <label>Choose an option
+                  <select name="id">
+                    {% for variant in detail_product.variants %}
+                      <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
+                        {{ variant.title | escape }} · {{ variant.price | money }}{% unless variant.available %} · Sold out{% endunless %}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </label>
+              {% endif %}
+              <label>Quantity
+                <select name="quantity">
+                  <option value="1">1 bag</option><option value="2">2 bags</option><option value="3">3 bags</option><option value="4">4 bags</option>
+                </select>
+              </label>
+              <button class="add-button" type="submit" {% unless detail_product.available %}disabled{% endunless %}>
+                {% if detail_product.available %}Add to cart{% else %}Sold out{% endif %}
+              </button>
+            {% endform %}
+            <p class="shipping-note">Roasted to order · Ships in 2–3 business days · <a href="{{ detail_product.url }}">Full details</a></p>
+          </div>
+        {% endfor %}
       {% else %}
         <p class="eyebrow">THE NEXT ROAST</p>
         <h3>Fresh coffee is on the way</h3>
