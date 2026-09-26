@@ -18,12 +18,12 @@
             "price_cents": 2400
           }
         },
-        "monkey": {
+        "georges": {
           "type": "upcoming_coffee",
           "settings": {
             "enabled": true,
-            "product_handle": "espresso-monkey-blend-12-oz",
-            "title": "Espresso Monkey Blend",
+            "product_handle": "georges-wonder-blend-12-oz",
+            "title": "George's Wonder Blend",
             "notes": "Rich chocolate, gentle fruit accents, and a full body.",
             "brew_method": "For espresso",
             "price_cents": 2200
@@ -65,7 +65,7 @@
       },
       "block_order": [
         "colombia",
-        "monkey",
+        "georges",
         "kenya",
         "costa",
         "ethiopia"
