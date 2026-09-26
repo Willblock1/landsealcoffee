@@ -22,7 +22,7 @@
           "type": "upcoming_coffee",
           "settings": {
             "enabled": true,
-            "product_handle": "sweet-maria-s-espresso-monkey-blend-12-oz",
+            "product_handle": "espresso-monkey-blend-12-oz",
             "title": "Espresso Monkey Blend",
             "notes": "Rich chocolate, gentle fruit accents, and a full body.",
             "brew_method": "For espresso",
