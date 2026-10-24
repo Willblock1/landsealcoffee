@@ -1,0 +1,49 @@
+{% comment %}
+  Subscribe-and-save purchase options.
+  Renders nothing unless the product has a selling plan group (created in the
+  Shopify Subscriptions app), so it is safe to ship before plans exist.
+
+  Usage (inside a product form):
+    {% render 'purchase-options', product: product %}
+{% endcomment %}
+{% if product.selling_plan_groups.size > 0 %}
+  {% assign po_variant = product.selected_or_first_available_variant %}
+  {% assign po_first_allocation = po_variant.selling_plan_allocations.first %}
+  {% assign po_savings = 0 %}
+  {% if po_first_allocation and po_first_allocation.compare_at_price > po_first_allocation.price %}
+    {% assign po_saved = po_first_allocation.compare_at_price | minus: po_first_allocation.price | times: 100 %}
+    {% assign po_savings = po_saved | divided_by: po_first_allocation.compare_at_price %}
+  {% endif %}
+  <fieldset class="purchase-options" data-purchase-options>
+    <legend class="visually-hidden">Purchase options</legend>
+    {% unless product.requires_selling_plan %}
+      <label class="purchase-option">
+        <input type="radio" name="purchase_type" value="one-time" checked data-purchase-type>
+        <span class="purchase-option__label">One-time purchase</span>
+        <span class="purchase-option__price">{{ po_variant.price | money }}</span>
+      </label>
+    {% endunless %}
+    <label class="purchase-option purchase-option--subscribe">
+      <input type="radio" name="purchase_type" value="subscribe" {% if product.requires_selling_plan %}checked{% endif %} data-purchase-type>
+      <span class="purchase-option__label">
+        Subscribe &amp; save{% if po_savings > 0 %} {{ po_savings }}%{% endif %}
+        <small>Fresh roast on repeat · skip or cancel anytime</small>
+      </span>
+      <span class="purchase-option__price">
+        {% if po_first_allocation %}
+          {% if po_first_allocation.compare_at_price > po_first_allocation.price %}<s>{{ po_first_allocation.compare_at_price | money }}</s>{% endif %}
+          {{ po_first_allocation.price | money }}
+        {% endif %}
+      </span>
+    </label>
+    <label class="purchase-option__frequency" data-frequency {% unless product.requires_selling_plan %}hidden{% endunless %}>Deliver every
+      <select name="selling_plan" data-selling-plan {% unless product.requires_selling_plan %}disabled{% endunless %}>
+        {% for group in product.selling_plan_groups %}
+          {% for plan in group.selling_plans %}
+            <option value="{{ plan.id }}">{{ plan.name | escape }}</option>
+          {% endfor %}
+        {% endfor %}
+      </select>
+    </label>
+  </fieldset>
+{% endif %}

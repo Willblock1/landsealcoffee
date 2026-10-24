@@ -120,6 +120,7 @@
                   </select>
                 </label>
               {% endif %}
+              {% render 'purchase-options', product: detail_product %}
               <label>Quantity
                 <select name="quantity">
                   <option value="1">1 bag</option><option value="2">2 bags</option><option value="3">3 bags</option><option value="4">4 bags</option>

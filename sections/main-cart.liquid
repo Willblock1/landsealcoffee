@@ -11,7 +11,7 @@
             <a href="{{ item.url }}">
               {% if item.image %}{{ item.image | image_url: width: 180 | image_tag: loading: 'lazy', alt: item.title }}{% else %}<img src="{{ 'land-seal-logo.png' | asset_url }}" alt="" width="90" height="90">{% endif %}
             </a>
-            <div><a href="{{ item.url }}"><strong>{{ item.product.title | escape }}</strong></a>{% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}<a class="remove-link" href="{{ item.url_to_remove }}">Remove</a></div>
+            <div><a href="{{ item.url }}"><strong>{{ item.product.title | escape }}</strong></a>{% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}{% if item.selling_plan_allocation %}<p class="cart-line__plan">Subscription · {{ item.selling_plan_allocation.selling_plan.name | escape }}</p>{% endif %}<a class="remove-link" href="{{ item.url_to_remove }}">Remove</a></div>
             <label>Quantity<input type="number" name="updates[]" value="{{ item.quantity }}" min="0"></label>
             <strong>{{ item.final_line_price | money }}</strong>
           </article>

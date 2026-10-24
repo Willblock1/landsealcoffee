@@ -35,3 +35,15 @@ document.addEventListener('click', function (event) {
   }
   if (details) details.focus({ preventScroll: true });
 });
+
+document.addEventListener('change', function (event) {
+  var radio = event.target.closest('[data-purchase-type]');
+  if (!radio) return;
+  var options = radio.closest('[data-purchase-options]');
+  if (!options) return;
+  var subscribe = radio.value === 'subscribe' && radio.checked;
+  var frequency = options.querySelector('[data-frequency]');
+  var select = options.querySelector('[data-selling-plan]');
+  if (frequency) frequency.hidden = !subscribe;
+  if (select) select.disabled = !subscribe;
+});

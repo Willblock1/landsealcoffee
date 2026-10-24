@@ -23,6 +23,7 @@
       {% else %}
         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
       {% endunless %}
+      {% render 'purchase-options', product: product %}
       <label>Quantity<input type="number" name="quantity" value="1" min="1"></label>
       <button class="add-button" type="submit" {% unless product.available %}disabled{% endunless %}>{% if product.available %}Add to cart{% else %}Sold out{% endif %}</button>
     {% endform %}
